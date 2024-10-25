@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Anime</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më e lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        thead th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        img {
+            max-width: 100px; /* Gjerësia maksimale e imazheve */
+            height: auto; /* Lartësia automatikisht përputhet me gjerësinë */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Recent Anime</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Premiered</th>
+                        <th>Aired</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-anime">
+                    <!-- Anime data will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeData() {
+            try {
+                const response = await fetch('/anime/recent_anime');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch anime data');
+                }
+                const animeData = await response.json();
+                const tbody = document.getElementById('recent-anime');
+
+                if (animeData.length === 0) {
+                    const noDataRow = document.createElement('tr');
+                    const noDataCell = document.createElement('td');
+                    noDataCell.colSpan = 4;
+                    noDataCell.textContent = 'No recent anime found.';
+                    noDataRow.appendChild(noDataCell);
+                    tbody.appendChild(noDataRow);
+                } else {
+                    animeData.forEach(anime => {
+                        const row = document.createElement('tr');
+
+                        // Name
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = anime.Name || 'Unnamed Anime';
+                        row.appendChild(nameCell);
+
+                        // Premiered
+                        const premieredCell = document.createElement('td');
+                        premieredCell.textContent = anime.Premiered || 'Unknown';
+                        row.appendChild(premieredCell);
+
+                        // Aired
+                        const airedCell = document.createElement('td');
+                        airedCell.textContent = anime.Aired || 'Unknown';
+                        row.appendChild(airedCell);
+
+                        // Image
+                        const imageCell = document.createElement('td');
+                        if (anime['Image URL'] && anime['Image URL'].startsWith('http')) {
+                            const img = document.createElement('img');
+                            img.src = anime['Image URL'];
+                            img.alt = anime.Name || 'Anime Image';
+                            img.style.width = '100px'; // Gjerësia e imazhit
+                            imageCell.appendChild(img);
+                        } else {
+                            imageCell.textContent = 'No Image'; // Mesazhi për imazhet e mungueshme
+                        }
+                        row.appendChild(imageCell);
+
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching anime data:', error);
+                const tbody = document.getElementById('recent-anime');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 4; // Span across all columns
+                cell.textContent = 'Error fetching data.';
+                cell.className = 'error-message'; // Shtimi i klasës për mesazhin e gabimit
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Fetch anime data on page load
+        fetchAnimeData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ view_title }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më e lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        td {
+            vertical-align: middle; /* Qendrimi vertikal i përmbajtjes */
+        }
+        img {
+            width: 100px; /* Gjerësia e imazhit */
+            height: auto; /* Lartësia automatikisht për të mbajtur proporcioni */
+            border-radius: 5px; /* Kënd të rrumbullakosur për imazhin */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{{ view_title }}</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>English Name</th>
+                        <th>Score</th>
+                        <th>Episodes</th>
+                        <th>Genres</th>
+                        <th>Members</th>
+                        <th>Synopsis</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody id="high-score-anime-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeData() {
+            try {
+                const response = await fetch('/anime/high_score_anime');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const animeData = await response.json();
+                const tbody = document.getElementById('high-score-anime-table');
+
+                animeData.forEach(anime => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${anime.Name}</td>
+                        <td>${anime['English name'] || 'N/A'}</td>
+                        <td>${anime.Score}</td>
+                        <td>${anime.Episodes}</td>
+                        <td>${anime.Genres}</td>
+                        <td>${anime.Members}</td>
+                        <td>${anime.Synopsis.substring(0, 100)}...</td>
+                        <td><img src="${anime['Image URL']}" alt="${anime.Name}"></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Failed to fetch anime data:", error);
+                const tbody = document.getElementById('high-score-anime-table');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="8" class="error-message">Error fetching data</td>`;
+                tbody.appendChild(tr);
+            }
+        }
+
+        fetchAnimeData();
+    </script>
+</body>
+</html>

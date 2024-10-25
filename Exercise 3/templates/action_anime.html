@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action Anime</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më e lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        td {
+            vertical-align: middle; /* Qendrimi vertikal i përmbajtjes */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Action Anime</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Episodes</th>
+                        <th>Premiered</th>
+                        <th>Genres</th>
+                    </tr>
+                </thead>
+                <tbody id="action-anime"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeData() {
+            try {
+                const response = await fetch('/anime/action_anime');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const animeData = await response.json();
+                const tbody = document.getElementById('action-anime');
+                
+                // Kontrolloni nëse animeData është e zbrazët
+                if (animeData.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 5;  // Span across all columns
+                    cell.textContent = 'No action anime found.';
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    animeData.forEach(anime => {
+                        const row = document.createElement('tr');
+                        
+                        // Krijo qeliza për secilën fushë
+                        const titleCell = document.createElement('td');
+                        titleCell.textContent = anime.Name || 'Unnamed Anime';  // Shfaq emrin ose një mesazh default
+                        row.appendChild(titleCell);
+                        
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = anime.Score !== null ? anime.Score : 'N/A';  // Shfaq rezultatin ose 'N/A'
+                        row.appendChild(scoreCell);
+                        
+                        const episodesCell = document.createElement('td');
+                        episodesCell.textContent = anime.Episodes !== null ? anime.Episodes : 'N/A';  // Shfaq episodet ose 'N/A'
+                        row.appendChild(episodesCell);
+                        
+                        const premieredCell = document.createElement('td');
+                        premieredCell.textContent = anime.Premiered || 'N/A';  // Shfaq datën e premierimit ose 'N/A'
+                        row.appendChild(premieredCell);
+
+                        const genresCell = document.createElement('td');
+                        genresCell.textContent = anime.Genres || 'N/A';  // Shfaq zhanret ose 'N/A'
+                        row.appendChild(genresCell);
+                        
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching anime data:', error);
+                const tbody = document.getElementById('action-anime');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 5;  // Span across all columns
+                cell.textContent = 'Error fetching data.';
+                cell.className = 'error-message'; // Shtimi i klasës për mesazhin e gabimit
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Thirr funksionin për të marrë dhe shfaqur të dhënat e anime
+        fetchAnimeData();
+    </script>
+</body>
+</html>

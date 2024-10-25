@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Views</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #b2e0e0;
+            font-family: 'Arial', sans-serif;
+        }
+        h1 {
+            color: #495057;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .anime-card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .anime-card:hover {
+            transform: translateY(-3px);
+        }
+        .anime-title {
+            background-color: #6c757d;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        .anime-title:hover {
+            background-color: #5a6268;
+        }
+        .container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Anime Views </h1>
+
+        <div class="row">
+            <!-- Column for Anime Views (aggregation) -->
+            <div class="col-md-6">
+                <h2>Filters</h2>
+
+                <div class="anime-card">
+                    <a href="/view/high_score_anime" class="anime-title">High Score Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/action_anime" class="anime-title">Action Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/long_series" class="anime-title">Long Series</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/recent_anime" class="anime-title">Recent Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/popular_anime" class="anime-title">Popular Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/average_score_anime" class="anime-title">Average Score Anime</a>
+                </div>
+            </div>
+
+            <!-- Column for Filters -->
+            <div class="col-md-6">
+                <h2>Aggregation</h2>
+
+                <div class="anime-card">
+                    <a href="/view/average_score_per_genre" class="anime-title">Average Score Per Genre</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/total_anime_per_studio" class="anime-title">Total Anime Per Studio</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/top_10_highest_rated_anime" class="anime-title">Top 10 Highest Rated Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/total_episodes_per_studio" class="anime-title">Total Episodes Per Studio</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/top_10_most_popular_anime" class="anime-title">Top 10 Most Popular Anime</a>
+                </div>
+
+                <div class="anime-card">
+                    <a href="/view/count_anime_by_type" class="anime-title">Total number for each type</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

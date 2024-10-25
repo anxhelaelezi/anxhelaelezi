@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Series Anime</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më e lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        thead th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        td {
+            vertical-align: middle; /* Qendrimi vertikal i përmbajtjes */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Long Series Anime</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Episodes</th>
+                        <th>Rank</th>
+                        <th>Type</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody id="long-series-anime"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeData() {
+            try {
+                const response = await fetch('/anime/long_series');  // Fetch from the long_series view
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const animeData = await response.json();
+                const tbody = document.getElementById('long-series-anime');
+
+                // Kontrolloni nëse animeData është e zbrazët
+                if (animeData.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 5; // Span across all columns
+                    cell.textContent = 'No long series anime found.';
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    animeData.forEach(anime => {
+                        const row = document.createElement('tr');
+
+                        // Krijo qeliza për secilën fushë
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = anime.Name || 'Unnamed Anime';  // Shfaq emrin ose një mesazh default
+                        row.appendChild(nameCell);
+
+                        const episodesCell = document.createElement('td');
+                        episodesCell.textContent = anime.Episodes || 'Unknown Episodes';  // Shfaq episodet ose mesazh default
+                        row.appendChild(episodesCell);
+
+                        const rankCell = document.createElement('td');
+                        rankCell.textContent = anime.Rank !== undefined ? anime.Rank : 'No Rank';  // Shfaq rangun ose mesazh default
+                        row.appendChild(rankCell);
+
+                        const typeCell = document.createElement('td');
+                        typeCell.textContent = anime.Type || 'No Type';  // Shfaq tipin ose mesazh default
+                        row.appendChild(typeCell);
+
+                        const imageCell = document.createElement('td');
+                        if (anime['Image URL']) {
+                            const img = document.createElement('img');
+                            img.src = anime['Image URL'];
+                            img.alt = anime.Name || 'Anime Image';
+                            img.style.width = '100px';  // Set image width
+                            imageCell.appendChild(img);
+                        } else {
+                            imageCell.textContent = 'No Image'; // Mesazhi për imazhet e mungueshme
+                        }
+                        row.appendChild(imageCell);
+
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching anime data:', error);
+                const tbody = document.getElementById('long-series-anime');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 5; // Span across all columns
+                cell.textContent = 'Error fetching data.';
+                cell.className = 'error-message'; // Shtimi i klasës për mesazhin e gabimit
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Thirr funksionin për të marrë dhe shfaqur të dhënat e anime
+        fetchAnimeData();
+    </script>
+</body>
+</html>

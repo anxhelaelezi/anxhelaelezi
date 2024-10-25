@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Anime per Studio</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më të lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        td {
+            vertical-align: middle; /* Qendrimi vertikal i përmbajtjes */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+            font-weight: bold; /* Trashësia e shkronjave për mesazhin e gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Total Anime per Studio</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Studio</th>
+                        <th>Total Anime</th>
+                    </tr>
+                </thead>
+                <tbody id="studio-anime">
+                    <!-- Data will be populated here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch data from the server
+        async function fetchTotalAnimePerStudio() {
+            try {
+                const response = await fetch('/anime/total_anime_per_studio'); // Ensure this matches your API route
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const studioData = await response.json();
+                const tbody = document.getElementById('studio-anime'); // Ensure this ID matches your HTML
+
+                // Check if studioData is empty
+                if (studioData.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 2; // Adjust colspan to match the number of columns
+                    cell.textContent = 'No studios found with more than 60 anime.';
+                    cell.className = 'error-message'; // Adding class for error message
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    studioData.forEach(item => {
+                        const row = document.createElement('tr');
+
+                        // Create cells for each field
+                        const studioCell = document.createElement('td');
+                        studioCell.textContent = Array.isArray(item.Studios) && item.Studios.length > 0 ? item.Studios[0] : 'N/A'; // Studio name
+                        row.appendChild(studioCell);
+
+                        const totalAnimeCell = document.createElement('td');
+                        totalAnimeCell.textContent = item.totalAnime || 0; // Total anime count
+                        row.appendChild(totalAnimeCell);
+
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching total anime data:', error);
+                const tbody = document.getElementById('studio-anime');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 2; // Adjust colspan to match the number of columns
+                cell.textContent = 'Error fetching data.';
+                cell.className = 'error-message'; // Adding class for error message
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Call the function to fetch and display total anime per studio data
+        fetchTotalAnimePerStudio();
+    </script>
+</body>
+</html>

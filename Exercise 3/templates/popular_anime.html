@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popular Anime</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më e lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        thead th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        .error-message {
+            text-align: center; 
+            color: red; /* Ngjyra e mesazhit të gabimit */
+        }
+        img {
+            max-width: 100px; /* Gjerësia maksimale e imazhit */
+            height: auto; /* Ruajtja e proporcioneve */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Popular Anime</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Episodes</th>
+                        <th>Popularity</th>
+                        <th>Type</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody id="popular-anime"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeData() {
+            try {
+                const response = await fetch('/anime/popular_anime'); // Fetch from the API
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const animeData = await response.json();
+                const tbody = document.getElementById('popular-anime');
+
+                // Check if animeData is empty
+                if (animeData.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 5; // Span across all columns
+                    cell.textContent = 'No popular anime found.'; // Update message
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    let hasAnime = false; // Flag to check if any anime is displayed
+                    animeData.forEach(anime => {
+                        // Only display anime with Episodes = 1
+                        if (anime.Episodes === 1) {
+                            hasAnime = true; // Set flag to true if any anime is displayed
+                            const row = document.createElement('tr');
+
+                            // Create cell for Name
+                            const nameCell = document.createElement('td');
+                            nameCell.textContent = anime.Name || 'Unnamed Anime';
+                            row.appendChild(nameCell);
+
+                            // Create cell for Episodes
+                            const episodesCell = document.createElement('td');
+                            episodesCell.textContent = anime.Episodes || 'Unknown Episodes';
+                            row.appendChild(episodesCell);
+
+                            // Create cell for Popularity
+                            const popularityCell = document.createElement('td');
+                            popularityCell.textContent = anime.Popularity || 'Unknown Popularity'; 
+                            row.appendChild(popularityCell);
+
+                            // Create cell for Type
+                            const typeCell = document.createElement('td');
+                            typeCell.textContent = anime.Type || 'No Type';
+                            row.appendChild(typeCell);
+
+                            // Create cell for Image
+                            const imageCell = document.createElement('td');
+                            if (anime['Image URL']) {
+                                const img = document.createElement('img');
+                                img.src = anime['Image URL'];
+                                img.alt = anime.Name || 'Anime Image';
+                                imageCell.appendChild(img);
+                            } else {
+                                imageCell.textContent = 'No Image';
+                            }
+                            row.appendChild(imageCell);
+
+                            tbody.appendChild(row);
+                        }
+                    });
+
+                    // If no anime matched the criteria, show a message
+                    if (!hasAnime) {
+                        const noAnimeRow = document.createElement('tr');
+                        const noAnimeCell = document.createElement('td');
+                        noAnimeCell.colSpan = 5;
+                        noAnimeCell.textContent = 'No popular anime with 1 episode found.';
+                        noAnimeRow.appendChild(noAnimeCell);
+                        tbody.appendChild(noAnimeRow);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching anime data:', error);
+                const tbody = document.getElementById('popular-anime');
+                const errorRow = document.createElement('tr');
+                const errorCell = document.createElement('td');
+                errorCell.colSpan = 5; // Span across all columns
+                errorCell.textContent = 'Error fetching data. Please try again later.'; // Error message
+                errorCell.className = 'error-message'; // Add error message class
+                errorRow.appendChild(errorCell);
+                tbody.appendChild(errorRow);
+            }
+        }
+
+        // Call the function to fetch and display anime data
+        fetchAnimeData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Count Anime by Type</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Ngjyra e sfondit më të lehtë dhe neutrale */
+            font-family: 'Arial', sans-serif; /* Fonti */
+        }
+        h1 {
+            color: #495057; /* Ngjyra e titullit */
+            margin-bottom: 30px;
+            text-align: center; /* Qendrim i titullit */
+        }
+        .table-container {
+            background-color: #ffffff; /* Ngjyra e bardhë për sfondin e tabelës */
+            border-radius: 10px; /* Kënd të rrumbullakosur */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hije për tabelën */
+            padding: 20px; /* Hapësira brenda konteinerit */
+        }
+        th {
+            background-color: #6c757d; /* Ngjyra gri për titujt e kolonave */
+            color: white; /* Ngjyra e shkronjave */
+        }
+        td {
+            vertical-align: middle; /* Qendrimi vertikal i përmbajtjes */
+        }
+        .error-message {
+            text-align: center; /* Qendrim i mesazhit të gabimit */
+            color: red; /* Ngjyra e mesazhit të gabimit */
+            font-weight: bold; /* Trashësia e shkronjave për mesazhin e gabimit */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Count Anime by Type</h1>
+        <div class="table-container mt-4">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Total Count</th>
+                    </tr>
+                </thead>
+                <tbody id="anime-type-count">
+                    <!-- Data will be populated here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnimeCountByType() {
+            try {
+                const response = await fetch('/anime/count_anime_by_type'); // Ensure this matches your API route
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const typeData = await response.json();
+                const tbody = document.getElementById('anime-type-count');
+
+                // Check if typeData is empty
+                if (typeData.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 2; // Adjust colspan to match the number of columns
+                    cell.textContent = 'No anime types found.';
+                    cell.className = 'error-message'; // Adding class for error message
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    typeData.forEach(item => {
+                        const row = document.createElement('tr');
+
+                        // Create cells for each field
+                        const typeCell = document.createElement('td');
+                        typeCell.textContent = item.Type || 'N/A'; // Type name
+                        row.appendChild(typeCell);
+
+                        const countCell = document.createElement('td');
+                        countCell.textContent = item.animeCount || 0; // Total count
+                        row.appendChild(countCell);
+
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching anime count data:', error);
+                const tbody = document.getElementById('anime-type-count');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 2; // Adjust colspan to match the number of columns
+                cell.textContent = 'Error fetching data.';
+                cell.className = 'error-message'; // Adding class for error message
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            }
+        }
+
+        // Call the function to fetch and display anime count by type data
+        fetchAnimeCountByType();
+    </script>
+</body>
+</html>
